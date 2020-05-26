@@ -1,10 +1,4 @@
-# noumena-sdk-python
 
-python client
-
-dependencies:
-
-```#python
 import time
 import hashlib
 import hmac
@@ -12,11 +6,8 @@ import base64
 import logging
 import json
 import requests
-```
 
-client:
-```
-class NoumenaClient(object):
+class RailoneClient(object):
     REQUEST_OK = 0
     ORG_BALANCE_INSUFFICIENT = 111011
     CARD_FROZEN = 111015
@@ -25,18 +16,18 @@ class NoumenaClient(object):
     KYC_SUCCEED = 1
     KYC_FAILED = 2
 
-    NOUMENA_HOST = "noumena_host"
-    NOUMENA_PASSWORD = "password"
-    NOUMENA_API_KEY = "api_key"
-    NOUMENA_API_SECRET = "api_secret"
+    RAILONE_HOST = "railone_host"
+    RAILONE_PASSWORD = "password"
+    RAILONE_API_KEY = "api_key"
+    RAILONE_API_SECRET = "api_secret"
 
     @classmethod
     def _generate_signature_headers(cls, method, url, body=None):
 
         # change this
-        password = cls.NOUMENA_PASSWORD
-        api_key = cls.NOUMENA_API_KEY
-        api_secret = cls.NOUMENA_API_SECRET
+        password = cls.RAILONE_PASSWORD
+        api_key = cls.RAILONE_API_KEY
+        api_secret = cls.RAILONE_API_SECRET
 
         # format payload
         current_time = int(time.time() * 1000)
@@ -64,7 +55,7 @@ class NoumenaClient(object):
         )
 
         authorization = ":".join(
-            str(x) for x in ["Noumena", api_key, current_time, signature]
+            str(x) for x in ["Railone", api_key, current_time, signature]
         )
         return {
             "Authorization": authorization,
@@ -75,7 +66,7 @@ class NoumenaClient(object):
     @classmethod
     def _requests(cls, method, path, data=None):
         method = method.upper()
-        host = cls.NOUMENA_HOST
+        host = cls.RAILONE_HOST
         signature_headers = cls._generate_signature_headers(
             method=method, url=path, body=data
         )
@@ -96,7 +87,7 @@ class NoumenaClient(object):
 
         if resp.status_code != 200:
             raise Exception(
-                f"call noumena open api error: {resp.status_code}, {resp.text}, "
+                f"call railone open api error: {resp.status_code}, {resp.text}, "
                 f"sig: {signature_headers}, "
                 f"method: {method}, "
                 f"path: {path}, "
@@ -261,4 +252,3 @@ class NoumenaClient(object):
         data = {"card_no": card_no}
         result = cls._requests(method="POST", path=path, data=data)
         return result["result"]
-```
